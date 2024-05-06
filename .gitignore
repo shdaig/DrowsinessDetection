@@ -1,0 +1,5 @@
+temp_*/
+.ipynb_checkpoints/
+__pycache__/
+.idea/
+config.ini
