@@ -123,9 +123,9 @@ if __name__ == "__main__":
                     plt.savefig(os.path.join(save_result_dir, f"{test_file}_loss.png"))
                     plt.close()
 
-                    result_accuracy[test_file] = np.max(classifier_history.history['val_accuracy'])
-
+                    # result_accuracy[test_file] = np.max(classifier_history.history['val_accuracy'])
                     model.load_weights(checkpoint_path)
+                    result_accuracy[test_file] = model.evaluate(x_test, y_test)[1]
                     y_pred = model.predict(x_test)
                     with open(os.path.join(save_result_dir, f"{test_file}_pred.npy"), 'wb') as f:
                         np.save(f, y_pred)
