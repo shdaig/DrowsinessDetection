@@ -126,9 +126,9 @@ if __name__ == "__main__":
                     idx = np.random.permutation(len(x_train))
                     x_train = x_train[idx]
                     y_train = y_train[idx]
-                    idx = np.random.permutation(len(x_test))
-                    x_test = x_test[idx]
-                    y_test = y_test[idx]
+                    # idx = np.random.permutation(len(x_test))
+                    # x_test = x_test[idx]
+                    # y_test = y_test[idx]
 
                     os.mkdir(os.path.join(save_result_dir, f"{test_file}_weights"))
                     checkpoint_path = os.path.join(save_result_dir, f"{test_file}_weights", "cp.chkpt")
