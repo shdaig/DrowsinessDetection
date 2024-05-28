@@ -15,6 +15,7 @@ import keras
 import matplotlib.pyplot as plt
 
 import tensorflow as tf
+from keras.callbacks import ModelCheckpoint
 
 
 def _extract_features_labels_fp(file_name: str, sfreq: int, channels: list[str],
@@ -81,7 +82,7 @@ if __name__ == "__main__":
     year = "2023"
     sfreq = 500
 
-    classifier_type = "gru"
+    classifier_type = "lstm"
 
     saved_model_dir = os.path.join("temp_autoencoders", "best_models")
 
@@ -160,10 +161,17 @@ if __name__ == "__main__":
                     idx = np.random.permutation(len(x_train))
                     x_train = x_train[idx]
                     y_train = y_train[idx]
-                    idx = np.random.permutation(len(x_test))
-                    x_test = x_test[idx]
-                    y_test = y_test[idx]
+                    # idx = np.random.permutation(len(x_test))
+                    # x_test = x_test[idx]
+                    # y_test = y_test[idx]
 
+                    os.mkdir(os.path.join(save_result_dir, f"{test_file}_weights"))
+                    checkpoint_path = os.path.join(save_result_dir, f"{test_file}_weights", "cp.chkpt")
+                    save_best_checkpoint = ModelCheckpoint(filepath=checkpoint_path,
+                                                           save_best_only=True,
+                                                           monitor='val_accuracy',
+                                                           mode='max',
+                                                           save_weights_only=True)
                     classifier = None
                     if classifier_type == "lstm":
                         classifier = simplelstm.SimpleLSTM(input_shape=(x_train.shape[1], x_train.shape[2]))
@@ -178,7 +186,8 @@ if __name__ == "__main__":
                                                         y_train,
                                                         validation_data=(x_test, y_test),
                                                         epochs=200,
-                                                        batch_size=8)
+                                                        batch_size=8,
+                                                        callbacks=[save_best_checkpoint])
 
                     plt.plot(classifier_history.history['accuracy'])
                     plt.plot(classifier_history.history['val_accuracy'])
@@ -200,8 +209,10 @@ if __name__ == "__main__":
 
                     # val_accuracy_final = classifier.evaluate(x=x_test, y=y_test, batch_size=4)
                     # print(val_accuracy_final)
-                    result_accuracy[test_file] = np.max(classifier_history.history['val_accuracy'])
+                    # result_accuracy[test_file] = np.max(classifier_history.history['val_accuracy'])
 
+                    classifier.load_weights(checkpoint_path)
+                    result_accuracy[test_file] = classifier.evaluate(x_test, y_test)[1]
                     y_pred = classifier.predict(x_test)
                     with open(os.path.join(save_result_dir, f"{test_file}_pred.npy"), 'wb') as f:
                         np.save(f, y_pred)
@@ -209,7 +220,7 @@ if __name__ == "__main__":
             result_acc = []
             with open(os.path.join(save_result_dir, 'loss.txt'), 'w') as f:
                 for test_file in result_accuracy:
-                    f.write(f"- val_loss {test_file}: {result_accuracy[test_file]}\n")
+                    f.write(f"- val_accuracy {test_file}: {result_accuracy[test_file]}\n")
                     result_acc.append(result_accuracy[test_file])
-                f.write(f"mean val_loss: {np.array(result_acc).mean()}\n")
+                f.write(f"mean val_accuracy: {np.array(result_acc).mean()}\n")
 

@@ -183,7 +183,7 @@ if __name__ == "__main__":
             result_acc = []
             with open(os.path.join(save_result_dir, 'loss.txt'), 'w') as f:
                 for test_file in result_accuracy:
-                    f.write(f"- val_loss {test_file}: {result_accuracy[test_file]}\n")
+                    f.write(f"- val_accuracy {test_file}: {result_accuracy[test_file]}\n")
                     result_acc.append(result_accuracy[test_file])
-                f.write(f"mean val_loss: {np.array(result_acc).mean()}\n")
+                f.write(f"mean val_accuracy: {np.array(result_acc).mean()}\n")
 
