@@ -1,6 +1,6 @@
 # 👁 Drowsiness Detection
 
-A deep learning-based system for detecting blinks and classifying open/closed eye states using EEG signals from frontal and ococcipital electrodes.
+A deep learning-based system for detecting blinks and classifying open/closed eye states using EEG signals from frontal and occipital electrodes.
 
 ## Description
 
